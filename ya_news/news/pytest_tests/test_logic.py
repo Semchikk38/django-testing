@@ -100,8 +100,7 @@ def test_anonymous_user_cant_create_comment(client, detail_url, form_data):
 
 
 def test_user_can_create_comment(
-        author_client, detail_url, comments_url, form_data, news, author
-        ):
+        author_client, detail_url, comments_url, form_data, news, author):
     response = author_client.post(detail_url, data=form_data)
     assert response.status_code == HTTPStatus.FOUND
     assert response.url == comments_url
@@ -127,8 +126,7 @@ def test_user_cant_use_bad_words(author_client, detail_url, bad_word):
 
 
 def test_author_can_edit_comment(
-        author_client, edit_url, comments_url, new_form_data, comment
-        ):
+        author_client, edit_url, comments_url, new_form_data, comment):
     original_news = comment.news
     original_author = comment.author
     original_created = comment.created
@@ -146,8 +144,7 @@ def test_author_can_edit_comment(
 
 
 def test_user_cant_edit_comment_of_another_user(
-        reader_client, edit_url, new_form_data, comment
-        ):
+        reader_client, edit_url, new_form_data, comment):
     original_text = comment.text
     original_news = comment.news
     original_author = comment.author
@@ -165,8 +162,7 @@ def test_user_cant_edit_comment_of_another_user(
 
 
 def test_author_can_delete_comment(
-        author_client, delete_url, comments_url, comment
-        ):
+        author_client, delete_url, comments_url, comment):
     comments_count_before = Comment.objects.count()
     response = author_client.post(delete_url)
     assert response.status_code == HTTPStatus.FOUND
@@ -175,8 +171,7 @@ def test_author_can_delete_comment(
 
 
 def test_user_cant_delete_comment_of_another_user(
-        reader_client, delete_url, comment
-        ):
+        reader_client, delete_url, comment):
     comments_count_before = Comment.objects.count()
     response = reader_client.post(delete_url)
     assert response.status_code == HTTPStatus.NOT_FOUND
