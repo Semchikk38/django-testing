@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from notes.models import Note
-from test_constants import (
+from .test_constants import (
     NOTES_LIST_URL, NOTE_ADD_URL, NOTE_SLUG, NOTE_TITLE, NOTE_TEXT
 )
 

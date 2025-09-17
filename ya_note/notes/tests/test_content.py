@@ -7,7 +7,7 @@ from pytils.translit import slugify
 
 from notes.forms import WARNING
 from notes.models import Note
-from test_constants import (
+from .test_constants import (
     NOTE_ADD_URL, NOTE_SLUG, NOTE_TITLE, NOTE_TEXT, FORM_DATA
 )
 
