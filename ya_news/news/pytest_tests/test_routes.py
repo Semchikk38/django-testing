@@ -36,6 +36,22 @@ def comment(news, author):
 
 
 @pytest.fixture
+def home_url():
+    return reverse('news:home')
+
+
+@pytest.fixture
+def login_url():
+    return reverse('users:login')
+
+
+@pytest.fixture
+def signup_url():
+    """Фикстура получения URL страницы регистрации."""
+    return reverse('users:signup')
+
+
+@pytest.fixture
 def detail_url(news):
     return reverse('news:detail', args=(news.id,))
 
@@ -51,50 +67,63 @@ def delete_url(comment):
 
 
 @pytest.fixture
-def public_urls():
-    return [
-        (reverse('news:home'), HTTPStatus.OK),
-        (reverse('users:login'), HTTPStatus.OK),
-        (reverse('users:signup'), HTTPStatus.OK),
-    ]
+def redirect_url_for_edit(edit_url, login_url):
+    return f'{login_url}?next={edit_url}'
 
 
 @pytest.fixture
-def redirect_urls(edit_url, delete_url):
-    login_url = reverse('users:login')
-    return [
-        (edit_url, f'{login_url}?next={edit_url}'),
-        (delete_url, f'{login_url}?next={delete_url}'),
+def redirect_url_for_delete(delete_url, login_url):
+    return f'{login_url}?next={delete_url}'
+
+
+@pytest.mark.parametrize(
+    'url_fixture, expected_status',
+    [
+        ('home_url', HTTPStatus.OK),
+        ('login_url', HTTPStatus.OK),
+        ('signup_url', HTTPStatus.OK),
+        ('detail_url', HTTPStatus.OK),
     ]
+)
+def test_public_pages_availability(
+        client, request, url_fixture, expected_status):
+    url = request.getfixturevalue(url_fixture)
+    response = client.get(url)
+    assert response.status_code == expected_status
 
 
-def test_public_pages_availability(client, public_urls, detail_url):
-    all_public_urls = public_urls + [(detail_url, HTTPStatus.OK)]
-
-    for url, expected_status in all_public_urls:
-        response = client.get(url)
-        assert response.status_code == expected_status
-
-
-def test_comment_edit_delete_availability(
-    client, author, reader, edit_url, delete_url
-):
-    test_cases = [
-        (author, edit_url, HTTPStatus.OK),
-        (author, delete_url, HTTPStatus.OK),
-        (reader, edit_url, HTTPStatus.NOT_FOUND),
-        (reader, delete_url, HTTPStatus.NOT_FOUND),
+@pytest.mark.parametrize(
+    'user_fixture, url_fixture, expected_status',
+    [
+        ('author', 'edit_url', HTTPStatus.OK),
+        ('author', 'delete_url', HTTPStatus.OK),
+        ('reader', 'edit_url', HTTPStatus.NOT_FOUND),
+        ('reader', 'delete_url', HTTPStatus.NOT_FOUND),
     ]
+)
+def test_comment_pages_availability(
+        client, request, user_fixture, url_fixture, expected_status):
+    user = request.getfixturevalue(user_fixture)
+    url = request.getfixturevalue(url_fixture)
 
-    for user, url, expected_status in test_cases:
-        client.force_login(user)
-        response = client.get(url)
-        assert response.status_code == expected_status
-        client.logout()
+    client.force_login(user)
+    response = client.get(url)
+    assert response.status_code == expected_status
+    client.logout()
 
 
-def test_redirect_for_anonymous_client(client, redirect_urls):
-    for url, expected_redirect in redirect_urls:
-        response = client.get(url)
-        assert response.status_code == HTTPStatus.FOUND
-        assert response.url == expected_redirect
+@pytest.mark.parametrize(
+    'url_fixture, redirect_url_fixture',
+    [
+        ('edit_url', 'redirect_url_for_edit'),
+        ('delete_url', 'redirect_url_for_delete'),
+    ]
+)
+def test_redirect_for_anonymous_client(
+        client, request, url_fixture, redirect_url_fixture):
+    url = request.getfixturevalue(url_fixture)
+    expected_redirect = request.getfixturevalue(redirect_url_fixture)
+
+    response = client.get(url)
+    assert response.status_code == HTTPStatus.FOUND
+    assert response.url == expected_redirect
