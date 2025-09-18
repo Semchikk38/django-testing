@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 
 from .test_base import BaseTest
-from .test_constants import NOTES_LIST_URL, NOTE_ADD_URL
+from .test_base import NOTES_LIST_URL, NOTE_ADD_URL
 
 User = get_user_model()
 
@@ -40,15 +40,14 @@ class TestRoutes(BaseTest):
 
     def test_redirects_for_anonymous_user(self):
         urls_to_check = [
-            (NOTES_LIST_URL, f'{self.login_url}?next={NOTES_LIST_URL}'),
-            (NOTE_ADD_URL, f'{self.login_url}?next={NOTE_ADD_URL}'),
-            (self.success_url, f'{self.login_url}?next={self.success_url}'),
-            (self.detail_url, f'{self.login_url}?next={self.detail_url}'),
-            (self.edit_url, f'{self.login_url}?next={self.edit_url}'),
-            (self.delete_url, f'{self.login_url}?next={self.delete_url}'),
+            (NOTES_LIST_URL, self.redirect_urls[NOTES_LIST_URL]),
+            (NOTE_ADD_URL, self.redirect_urls[NOTE_ADD_URL]),
+            (self.success_url, self.redirect_urls[self.success_url]),
+            (self.detail_url, self.redirect_urls[self.detail_url]),
+            (self.edit_url, self.redirect_urls[self.edit_url]),
+            (self.delete_url, self.redirect_urls[self.delete_url]),
         ]
 
         for url, expected_url in urls_to_check:
             with self.subTest(url=url):
-                response = self.client.get(url)
-                self.assertRedirects(response, expected_url)
+                self.assertRedirects(self.client.get(url), expected_url)
