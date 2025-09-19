@@ -1,4 +1,5 @@
 from http import HTTPStatus
+
 import pytest
 from pytest_lazyfixture import lazy_fixture as lf
 
@@ -8,23 +9,36 @@ OK = HTTPStatus.OK
 NOT_FOUND = HTTPStatus.NOT_FOUND
 FOUND = HTTPStatus.FOUND
 
+CLIENT = lf('client')
+AUTHOR_CLIENT = lf('author_client')
+READER_CLIENT = lf('reader_client')
+
+HOME_URL = lf('home_url')
+LOGIN_URL = lf('login_url')
+SIGNUP_URL = lf('signup_url')
+DETAIL_URL = lf('detail_url')
+EDIT_URL = lf('edit_url')
+DELETE_URL = lf('delete_url')
+REDIRECT_URL_FOR_EDIT = lf('redirect_url_for_edit')
+REDIRECT_URL_FOR_DELETE = lf('redirect_url_for_delete')
+
 
 @pytest.mark.parametrize(
     'client_fixture_name, url_fixture_name, expected_status',
     [
-        (lf('client'), lf('home_url'), OK),
-        (lf('client'), lf('login_url'), OK),
-        (lf('client'), lf('signup_url'), OK),
-        (lf('client'), lf('detail_url'), OK),
+        (CLIENT, HOME_URL, OK),
+        (CLIENT, LOGIN_URL, OK),
+        (CLIENT, SIGNUP_URL, OK),
+        (CLIENT, DETAIL_URL, OK),
 
-        (lf('author_client'), lf('edit_url'), OK),
-        (lf('author_client'), lf('delete_url'), OK),
+        (AUTHOR_CLIENT, EDIT_URL, OK),
+        (AUTHOR_CLIENT, DELETE_URL, OK),
 
-        (lf('reader_client'), lf('edit_url'), NOT_FOUND),
-        (lf('reader_client'), lf('delete_url'), NOT_FOUND),
+        (READER_CLIENT, EDIT_URL, NOT_FOUND),
+        (READER_CLIENT, DELETE_URL, NOT_FOUND),
 
-        (lf('client'), lf('edit_url'), FOUND),
-        (lf('client'), lf('delete_url'), FOUND),
+        (CLIENT, EDIT_URL, FOUND),
+        (CLIENT, DELETE_URL, FOUND),
     ]
 )
 def test_all_pages_status_codes(
@@ -36,8 +50,8 @@ def test_all_pages_status_codes(
 @pytest.mark.parametrize(
     'url_fixture_name, redirect_url_fixture_name',
     [
-        (lf('edit_url'), lf('redirect_url_for_edit')),
-        (lf('delete_url'), lf('redirect_url_for_delete')),
+        (EDIT_URL, REDIRECT_URL_FOR_EDIT),
+        (DELETE_URL, REDIRECT_URL_FOR_DELETE),
     ]
 )
 def test_redirect_urls(client, url_fixture_name, redirect_url_fixture_name):

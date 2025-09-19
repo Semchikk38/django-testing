@@ -1,10 +1,16 @@
 from http import HTTPStatus
+
 import pytest
-
 from news.models import Comment
-from news.forms import WARNING
+from news.forms import WARNING, BAD_WORDS
 
-from .conftest import FORM_DATA, NEW_FORM_DATA, BAD_WORDS_DATA
+
+FORM_DATA = {'text': 'Текст комментария'}
+NEW_FORM_DATA = {'text': 'Обновлённый комментарий'}
+BAD_WORDS_DATA = [
+    {'text': f'Какой-то текст, {bad_word}, еще текст'}
+    for bad_word in BAD_WORDS
+]
 
 
 pytestmark = pytest.mark.django_db
@@ -64,21 +70,19 @@ def test_user_cant_edit_comment_of_another_user(
 
 def test_author_can_delete_comment(
         author_client, delete_url, comments_url, comment):
-    comment_id = comment.id
     response = author_client.post(delete_url)
 
     assert response.status_code == HTTPStatus.FOUND
     assert response.url == comments_url
-    assert not Comment.objects.filter(id=comment_id).exists()
+    assert Comment.objects.count() == 0
 
 
 def test_user_cant_delete_comment_of_another_user(
         reader_client, delete_url, comment):
-    comment_id = comment.id
     response = reader_client.post(delete_url)
 
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert Comment.objects.filter(id=comment_id).exists()
+    assert Comment.objects.count() == 1
 
     unchanged_comment = Comment.objects.get(id=comment.id)
     assert unchanged_comment.text == comment.text

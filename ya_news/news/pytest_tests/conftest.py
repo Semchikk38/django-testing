@@ -1,12 +1,11 @@
-import pytest
 from datetime import datetime, timedelta
 
+import pytest
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
 
-from news.forms import BAD_WORDS
 from news.models import Comment, News
 
 User = get_user_model()
@@ -14,10 +13,6 @@ User = get_user_model()
 
 FORM_DATA = {'text': 'Текст комментария'}
 NEW_FORM_DATA = {'text': 'Обновлённый комментарий'}
-BAD_WORDS_DATA = [
-    {'text': f'Какой-то текст, {bad_word}, еще текст'}
-    for bad_word in BAD_WORDS
-]
 
 
 @pytest.fixture
