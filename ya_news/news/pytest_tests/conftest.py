@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 import pytest
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -10,6 +10,14 @@ from news.forms import BAD_WORDS
 from news.models import Comment, News
 
 User = get_user_model()
+
+
+FORM_DATA = {'text': 'Текст комментария'}
+NEW_FORM_DATA = {'text': 'Обновлённый комментарий'}
+BAD_WORDS_DATA = [
+    {'text': f'Какой-то текст, {bad_word}, еще текст'}
+    for bad_word in BAD_WORDS
+]
 
 
 @pytest.fixture
@@ -43,6 +51,7 @@ def author_client(author, client):
 
 @pytest.fixture
 def news_batch():
+    """Фикстура подготовки пакета новостей."""
     today = datetime.today()
     News.objects.bulk_create(
         News(
@@ -100,24 +109,6 @@ def delete_url(comment):
 @pytest.fixture
 def comments_url(detail_url):
     return f'{detail_url}#comments'
-
-
-@pytest.fixture
-def form_data():
-    return {'text': 'Текст комментария'}
-
-
-@pytest.fixture
-def new_form_data():
-    return {'text': 'Обновлённый комментарий'}
-
-
-@pytest.fixture
-def bad_words_data():
-    return [
-        {'text': f'Какой-то текст, {bad_word}, еще текст'}
-        for bad_word in BAD_WORDS
-    ]
 
 
 @pytest.fixture
