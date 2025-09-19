@@ -53,13 +53,6 @@ class BaseTest(TestCase):
         cls.delete_url = DELETE_URL
         cls.expected_redirect_url = REDIRECT_NOTE_ADD_URL
 
-        cls.redirect_notes_list_url = REDIRECT_NOTES_LIST_URL
-        cls.redirect_note_add_url = REDIRECT_NOTE_ADD_URL
-        cls.redirect_success_url = REDIRECT_SUCCESS_URL
-        cls.redirect_detail_url = REDIRECT_DETAIL_URL
-        cls.redirect_edit_url = REDIRECT_EDIT_URL
-        cls.redirect_delete_url = REDIRECT_DELETE_URL
-
         cls.OK = HTTPStatus.OK
         cls.NOT_FOUND = HTTPStatus.NOT_FOUND
         cls.FOUND = HTTPStatus.FOUND
@@ -68,14 +61,4 @@ class BaseTest(TestCase):
             'title': 'Новый заголовок',
             'text': 'Новый текст',
             'slug': 'new-slug'
-        }
-
-    def setUp(self):
-        self.redirect_urls = {
-            NOTES_LIST_URL: REDIRECT_NOTES_LIST_URL,
-            NOTE_ADD_URL: REDIRECT_NOTE_ADD_URL,
-            self.success_url: REDIRECT_SUCCESS_URL,
-            self.detail_url: REDIRECT_DETAIL_URL,
-            self.edit_url: REDIRECT_EDIT_URL,
-            self.delete_url: REDIRECT_DELETE_URL,
         }

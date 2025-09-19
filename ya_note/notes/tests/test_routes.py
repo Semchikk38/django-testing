@@ -1,7 +1,11 @@
 from django.contrib.auth import get_user_model
 
-from .test_base import BaseTest
-from .test_base import NOTES_LIST_URL, NOTE_ADD_URL
+from .test_base import BaseTest, NOTES_LIST_URL, NOTE_ADD_URL
+from .test_base import (
+    REDIRECT_NOTES_LIST_URL, REDIRECT_NOTE_ADD_URL,
+    REDIRECT_SUCCESS_URL, REDIRECT_DETAIL_URL,
+    REDIRECT_EDIT_URL, REDIRECT_DELETE_URL
+)
 
 User = get_user_model()
 
@@ -40,12 +44,12 @@ class TestRoutes(BaseTest):
 
     def test_redirects_for_anonymous_user(self):
         urls_to_check = [
-            (NOTES_LIST_URL, self.redirect_urls[NOTES_LIST_URL]),
-            (NOTE_ADD_URL, self.redirect_urls[NOTE_ADD_URL]),
-            (self.success_url, self.redirect_urls[self.success_url]),
-            (self.detail_url, self.redirect_urls[self.detail_url]),
-            (self.edit_url, self.redirect_urls[self.edit_url]),
-            (self.delete_url, self.redirect_urls[self.delete_url]),
+            (NOTES_LIST_URL, REDIRECT_NOTES_LIST_URL),
+            (NOTE_ADD_URL, REDIRECT_NOTE_ADD_URL),
+            (self.success_url, REDIRECT_SUCCESS_URL),
+            (self.detail_url, REDIRECT_DETAIL_URL),
+            (self.edit_url, REDIRECT_EDIT_URL),
+            (self.delete_url, REDIRECT_DELETE_URL),
         ]
 
         for url, expected_url in urls_to_check:
