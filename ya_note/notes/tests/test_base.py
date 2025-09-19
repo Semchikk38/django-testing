@@ -44,15 +44,6 @@ class BaseTest(TestCase):
         cls.author_client.force_login(cls.author)
         cls.not_author_client.force_login(cls.not_author)
 
-        cls.home_url = HOME_URL
-        cls.login_url = LOGIN_URL
-        cls.signup_url = SIGNUP_URL
-        cls.success_url = SUCCESS_URL
-        cls.detail_url = DETAIL_URL
-        cls.edit_url = EDIT_URL
-        cls.delete_url = DELETE_URL
-        cls.expected_redirect_url = REDIRECT_NOTE_ADD_URL
-
         cls.OK = HTTPStatus.OK
         cls.NOT_FOUND = HTTPStatus.NOT_FOUND
         cls.FOUND = HTTPStatus.FOUND

@@ -2,11 +2,10 @@ from http import HTTPStatus
 
 import pytest
 from news.models import Comment
-from news.forms import WARNING, BAD_WORDS
+from news.forms import BAD_WORDS, WARNING
 
 
-FORM_DATA = {'text': 'Текст комментария'}
-NEW_FORM_DATA = {'text': 'Обновлённый комментарий'}
+TEXT = 'Текст комментария'
 BAD_WORDS_DATA = [
     {'text': f'Какой-то текст, {bad_word}, еще текст'}
     for bad_word in BAD_WORDS
@@ -17,20 +16,20 @@ pytestmark = pytest.mark.django_db
 
 
 def test_anonym_cant_create_comment(client, detail_url):
-    client.post(detail_url, data=FORM_DATA)
+    client.post(detail_url, data={'text': TEXT})
     assert Comment.objects.count() == 0
 
 
 def test_user_can_create_comment(
         author_client, detail_url, comments_url, news, author):
-    response = author_client.post(detail_url, data=FORM_DATA)
+    response = author_client.post(detail_url, data={'text': TEXT})
     assert response.status_code == HTTPStatus.FOUND
     assert response.url == comments_url
 
     assert Comment.objects.count() == 1
 
     comment = Comment.objects.get()
-    assert comment.text == FORM_DATA['text']
+    assert comment.text == TEXT
     assert comment.news == news
     assert comment.author == author
 
@@ -45,12 +44,13 @@ def test_user_cant_use_bad_words(author_client, detail_url, bad_words_data):
 
 def test_author_can_edit_comment(
         author_client, edit_url, comments_url, comment):
-    response = author_client.post(edit_url, data=NEW_FORM_DATA)
+    new_text = 'Обновлённый комментарий'
+    response = author_client.post(edit_url, data={'text': new_text})
     assert response.status_code == HTTPStatus.FOUND
     assert response.url == comments_url
 
     updated_comment = Comment.objects.get(id=comment.id)
-    assert updated_comment.text == NEW_FORM_DATA['text']
+    assert updated_comment.text == new_text
     assert updated_comment.news == comment.news
     assert updated_comment.author == comment.author
     assert updated_comment.created == comment.created
@@ -58,7 +58,8 @@ def test_author_can_edit_comment(
 
 def test_user_cant_edit_comment_of_another_user(
         reader_client, edit_url, comment):
-    response = reader_client.post(edit_url, data=NEW_FORM_DATA)
+    new_text = 'Обновлённый комментарий'
+    response = reader_client.post(edit_url, data={'text': new_text})
     assert response.status_code == HTTPStatus.NOT_FOUND
 
     unchanged_comment = Comment.objects.get(id=comment.id)

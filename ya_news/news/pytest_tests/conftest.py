@@ -11,10 +11,6 @@ from news.models import Comment, News
 User = get_user_model()
 
 
-FORM_DATA = {'text': 'Текст комментария'}
-NEW_FORM_DATA = {'text': 'Обновлённый комментарий'}
-
-
 @pytest.fixture
 def author(django_user_model):
     return django_user_model.objects.create(username='Комментатор')

@@ -1,4 +1,4 @@
-from .test_base import BaseTest, NOTES_LIST_URL, NOTE_ADD_URL
+from .test_base import BaseTest, NOTES_LIST_URL, NOTE_ADD_URL, EDIT_URL
 
 
 class TestContent(BaseTest):
@@ -22,7 +22,7 @@ class TestContent(BaseTest):
     def test_pages_contain_form(self):
         urls_to_check = [
             (NOTE_ADD_URL, 'страницы создания'),
-            (self.edit_url, 'страницы редактирования'),
+            (EDIT_URL, 'страницы редактирования'),
         ]
 
         for url, description in urls_to_check:
